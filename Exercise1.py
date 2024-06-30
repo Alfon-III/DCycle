@@ -76,12 +76,12 @@ session.commit()
 
 #lcac_a1 = LCAComponent(lca_id=lca1.id, phase_type='A1 Extraccion Materia Prima', quantity=0.02, unit='kg')
 
-lcac_a1 = LCAComponent(lca_id=lca1.id, phase_type='A1 Extraccion Materia Prima', quantity=0.02, unit='kg')
-lcac_a1_1 = LCAComponent(lca_id=lca1.id, phase_type='A1_1 Extraccion Hierro', quantity=0.01, unit='kg')
-lcac_a1_2 = LCAComponent(lca_id=lca1.id, phase_type='A1_2 Extraccion Acero', quantity=0.01, unit='kg')
+lcac_a1 = LCAComponent(lca_id=lca1.id, phase_type='A1', quantity=0.02, unit='kg')
+lcac_a1_1 = LCAComponent(lca_id=lca1.id, phase_type='A1', quantity=0.01, unit='kg')
+lcac_a1_2 = LCAComponent(lca_id=lca1.id, phase_type='A1', quantity=0.01, unit='kg')
 
-lcac_a2 = LCAComponent(lca_id=lca1.id, phase_type='A2 Transporte', quantity=0.0035, unit='ton kg')
-lcac_a3 = LCAComponent(lca_id=lca1.id, phase_type='A3 Manufacturacion', quantity=0.0066, unit='kWh')
+lcac_a2 = LCAComponent(lca_id=lca1.id, phase_type='A2', quantity=0.0035, unit='ton kg')
+lcac_a3 = LCAComponent(lca_id=lca1.id, phase_type='A3', quantity=0.0066, unit='kWh')
 
 session.add_all([lcac_a1, lcac_a1_1, lcac_a1_2, lcac_a2, lcac_a3])
 session.commit()
