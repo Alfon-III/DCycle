@@ -24,9 +24,9 @@
 
 ## Explicación: 
 
-1. Los archivos csv y excel de local se suben a un S3 Bucket mediante una API Gateway desde 
-2. Los excel son divididos en filas mediante una función lambda que los reparte en un SQS.
-3. Los SQS se reparten entre las lambdas o EC2 disponibles
+1. Los archivos csv y excel de local se suben a un S3 Bucket mediante una API Gateway desde el ordenador del usuario/empresa
+2. Los excel son divididos en filas mediante una función lambda que los reparte a un SQS.
+3. Los SQS se reparten entre las lambdas o EC2 disponibles.
 4. Las Lambdas y EC2 están en un Auto Scaling Group para que puedan prestar servicio según la demanda de trabajo. 
    * [Lambda Auto Scaling](https://aws.amazon.com/es/blogs/compute/understanding-how-aws-lambda-scales-when-subscribed-to-amazon-sqs-queues/)
 5. Los resultados de las lambdas se guardan en un S3 con los resltados del CSV original, asimismo, se envía una notificación mediante SNS para indicar que esa fila ha sido procesada y podrá acceder al resultado de la misma
