@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine,  update
 from sqlalchemy.orm import sessionmaker
 from Exercise1 import Base, LCA, LCAComponent, Impact, Source
-from tabulate import tabulate
+
 
 engine = create_engine('sqlite:///life_cycle.db', echo=True)
 
@@ -55,17 +55,46 @@ def update_lcac_impacts(lcac: LCAComponent, value:float) -> bool:
 parent = session.query(LCAComponent).filter(LCAComponent.id==1).first()
 update_lcac_impacts(parent, 0.0231)
 
+# Exercise 3
 
-def calculate_impact():
+#Formula del impacto = (Quantity (units) * Impact_Value (%) * 100)
 
-    #Formula del impacto = (Quantity (units) * Impact_Value (%) * 100)
+# Impacto padre = Hijo1(Quantity * Impact_value) + Hijo2(Quantity * Impact_value)
+# Partimos de la base que el sumatorio del value de los impacts de los hijos no será superior a 1 (100%)
+# Al ser una estructura de N niveles, se  debe recorrer de manera recursiva
 
-    # Impacto padre = Hijo1(Quantity * Impact_value) + Hijo2(Quantity * Impact_value)
-    # Partimos de la base que el sumatorio del value de los impacts de los hijos no será superior a 1 (100%)
-    # Al ser una estructura de N niveles, se  debe recorrer de manera recursiva
+# En lugar de hacer  una query por cada nivel/ iteración, obtener todos los valores en un  df para ir calculando los datos y trabajar sobre esta
+    
+def recursive_impact(parent_id):
+    
+    child_impacts = session.query(Impact)\
+    .filter(Impact.lcac_id==parent_id)
+    
+    total_impact = 0
+    for child_im in child_impacts:
+    
+        # Nodo "Hoja" (Caso base)
+        if child_im.child_lcac_id is None:
+            
+            impact = child_im.value
+            
+            quantity = session.query(LCAComponent).filter(
+                LCAComponent.id==child_im.lcac_id
+            ).first().quantity
+            
+            print('---> Hoja ', impact, quantity)
+            
+            total_impact += impact * quantity
+        
+        # Nodo Rama (Caso recursivo)
+        else:
+            print('Rama: ', child_im.child_lcac_id)
+            total_impact += recursive_impact(child_im.child_lcac_id)
 
-    # En lugar de hacer  una query por cada nivel/ iteración, obtener todos los valores en un  df para ir calculando los datos y trabajar sobre esta
+    
+    return total_impact / child_impacts.count()
 
+def calculate_impact(parent_id):
+    return recursive_impact(parent_id)
 
-    return True
-
+print(calculate_impact(parent.lca_id))
