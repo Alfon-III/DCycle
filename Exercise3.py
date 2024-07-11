@@ -98,3 +98,35 @@ def calculate_impact(parent_id):
     return recursive_impact(parent_id)
 
 print(calculate_impact(parent.lca_id))
+
+# Solucion query recursiva
+# https://sanjayasubedi.com.np/python/sqlalchemy/recursive-query-in-postgresql-with-sqlalchemy/
+topq = (
+    session.query(
+        Impact.lcac_id,
+        Impact.child_lcac_id,
+        Impact.value,
+        LCAComponent.quantity
+    )
+    .join(LCAComponent, Impact.lcac_id==LCAComponent.id)
+    .where(Impact.lcac_id == 1)
+    .cte('cte', recursive=True)
+)
+
+bottomq  = (
+    session.query(
+        Impact.lcac_id,
+        Impact.child_lcac_id,
+        Impact.value,
+        LCAComponent.quantity
+    )
+    .join(LCAComponent, Impact.lcac_id==LCAComponent.id)
+    .join(topq, Impact.lcac_id == topq.c.child_lcac_id)
+)
+
+from sqlalchemy import select
+recursive_q = topq.union(bottomq)
+result = session.query(recursive_q)
+
+for row in result:
+    print(row.lcac_id, row.child_lcac_id, row.value, row.quantity)
